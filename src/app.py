@@ -43,10 +43,22 @@ def handle_users():
     print(all_users)
     return jsonify(all_users), 200
 
+@app.route('/user', methods=['GET'])
+def get_user_by_id(user_id):
+    Pick_user = User.query.filter_by(id=user_id).first()
+    if Pick_user is None:
+        raise APIException('Usuario no existe', status_code=404)
+    print(Pick_user)
+    return jsonify(Pick_user.serialize()), 200
+
 @app.route('/user', methods=['POST'])
 def post_users():
     request_body_users = request.get_json()   
-    new_body = User(email = request_body_users['email'],password = request_body_users['password'],is_active = request_body_users['is_active'])  
+    new_body = User(
+        username = request_body_users['username'],
+        email = request_body_users['email'],
+        password = request_body_users['password'],
+        is_active = request_body_users['is_active'])  
     db.session.add(new_body)
     db.session.commit()
     return jsonify(request_body_users), 200
